@@ -1,0 +1,186 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: rgb(254, 250, 250);
+  width: 100%;
+  overflow-x: hidden;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Tachyons-style utility classes */
+.tc { text-align: center; }
+.pa2 { padding: 1rem; }
+.pa3 { padding: 1.5rem; }
+.ma2 { margin: 0.5rem; }
+.ba { border: 1px solid; }
+.b--green { border-color: #19a974; }
+.bg-grey { background-color: #f4f4f4; }
+.bg-light { background-color: #f8f9fa; }
+.dib { display: inline-block; }
+.br3 { border-radius: 0.5rem; }
+.bw2 { border-width: 2px; }
+.grow { transition: transform 0.2s ease-in-out; }
+.grow:hover { transform: scale(1.05); }
+.shadow-5 { box-shadow: 0 0 16px 2px rgba(0,0,0,.2); }
+
+.headingContainer {
+  height: 150px;
+  text-align: center;
+}
+
+.pokemonHeading {
+  font-family: 'Pokemon Solid', 'Orbitron', 'Arial Black', sans-serif;
+  font-size: 100px;
+  font-weight: 900;
+  color: #FFCC01;
+  padding: 20px 5px;
+  text-shadow: 3px 3px 0 #2A5599, -1px -1px 0 #2A5599, 1px -1px 0 #2A5599, -1px 1px 0 #2A5599, 1px 1px 0 #2A5599;
+}
+
+.pokemonNameDetail {
+  font-family: 'Pokemon Hollow', 'Orbitron', 'Arial Black', sans-serif;
+  font-size: 100px;
+  font-weight: bold;
+  padding: 20px 5px;
+}
+
+.pokemonImg {
+height: 200px;
+width: 200px;
+}
+
+/* Pokemon details css */
+
+.pokemon-detail-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.pokemon-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.pokemon-body {
+  display: flex;
+  gap: 20px;
+}
+
+.pokemon-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pokemon-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+.pokemon-info {
+  flex: 2;
+}
+
+.pokemon-types span {
+  display: inline-block;
+  margin: 5px 0;
+}
+
+.pokemon-stats ul {
+  list-style: none;
+  padding: 0;
+}
+
+.pokemon-stats li {
+  margin: 5px 0;
+}
+
+/* style for link components*/
+.link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Specific style for heading link */
+.heading-link {
+  display: block;
+  width: 100%;
+}
+
+/* Pokemon evolution chain style */
+
+.evolution-chain {
+  text-align: center;
+  background-color: lightgrey; /* Dark grey background */
+  padding: 20px;
+  border-radius: 10px; /* Rounded corners for the container */
+  color: black; /* Black text color */
+}
+
+.evolution-container {
+  display: flex;
+  flex-direction: row; /* Horizontal layout */
+  align-items: center;
+  justify-content: space-evenly; /* Adjust spacing as needed */
+  flex-wrap: wrap; /* Ensures items wrap to the next line if necessary */
+}
+
+.evolution-item {
+  display: flex;
+  align-items: center;
+  margin: 0 15px;
+}
+
+.evolution-item .pokemon-evolution-card {
+  width: 20vw; /* Use viewport width for responsiveness */
+max-width: 150px; /* Set a max width to prevent cards from getting too large */
+aspect-ratio: 1; /* Ensures the height is always equal to the width */
+border-radius: 50%; /* Makes the card perfectly round */
+overflow: hidden; /* Ensures content stays within the round card */
+border: 3px solid white; /* White border around each card */
+padding: 10px;
+background-color: #444; /* Slightly lighter grey for the card background */
+display: flex; /* Flex display to center content */
+align-items: center; /* Center content vertically */
+justify-content: center; /* Center content horizontally */
+}
+
+
+/* Evolution chain to turn vertical direction when screen size gets smaller */
+
+@media (max-width: 768px) {
+  .evolution-container {
+    flex-direction: column; /* Switch to vertical layout */
+    align-items: center; /* Center items vertically */
+  }
+
+  .evolution-item {
+    margin-bottom: 20px; /* Add some spacing between items */
+  }
+}
+

@@ -1,0 +1,68 @@
+#root {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  width: 100%;
+  min-height: 100vh;
+}
+
+
+/* Pokemon evolution chain style */
+
+.evolution-chain {
+  text-align: center;
+  background-color: lightgrey; /* Dark grey background */
+  padding: 20px;
+  border-radius: 10px; /* Rounded corners for the container */
+  color: black; /* Black text color */
+}
+
+.evolution-container {
+  display: flex;
+  flex-direction: row; /* Horizontal layout */
+  align-items: center;
+  justify-content: space-evenly; /* Adjust spacing as needed */
+  flex-wrap: wrap; /* Ensures items wrap to the next line if necessary */
+}
+
+.evolution-item {
+  display: flex;
+  align-items: center;
+  margin: 0 15px;
+}
+
+.evolution-item .pokemon-evolution-card {
+  width: 20vw; /* Use viewport width for responsiveness */
+max-width: 150px; /* Set a max width to prevent cards from getting too large */
+aspect-ratio: 1; /* Ensures the height is always equal to the width */
+border-radius: 50%; /* Makes the card perfectly round */
+overflow: hidden; /* Ensures content stays within the round card */
+border: 3px solid white; /* White border around each card */
+padding: 10px;
+background-color: #444; /* Slightly lighter grey for the card background */
+display: flex; /* Flex display to center content */
+align-items: center; /* Center content vertically */
+justify-content: center; /* Center content horizontally */
+}
+
+
+/* Evolution chain to turn vertical direction when screen size gets smaller */
+
+@media (max-width: 768px) {
+  .evolution-container {
+    flex-direction: column; /* Switch to vertical layout */
+    align-items: center; /* Center items vertically */
+  }
+
+  .evolution-item {
+    margin-bottom: 20px; /* Add some spacing between items */
+  }
+}
+
+/* style for link components*/
+.link {
+  text-decoration: none;
+  color: black;
+}
+
+
