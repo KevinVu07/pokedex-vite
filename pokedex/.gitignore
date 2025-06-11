@@ -94,3 +94,8 @@ out/
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# amplify
+.amplify
+amplify_outputs*
+amplifyconfiguration*
