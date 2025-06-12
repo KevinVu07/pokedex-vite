@@ -1,18 +1,12 @@
 version: 1
 frontend:
-  nodeVersion: 20
   phases:
     preBuild:
       commands:
-        - nvm use 20
         - npm install
     build:
       commands:
         - npm run build
-        - echo "Build completed. Checking dist contents:"
-        - ls -la dist/
-        - echo "Checking _redirects file:"
-        - cat dist/_redirects || echo "_redirects file not found in dist"
   artifacts:
     baseDirectory: dist
     files:
@@ -20,16 +14,3 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
-  customHeaders:
-    - pattern: "**/*"
-      headers:
-        - key: "X-Frame-Options"
-          value: "DENY"
-        - key: "X-XSS-Protection"
-          value: "1; mode=block"
-        - key: "X-Content-Type-Options"
-          value: "nosniff"
-  rewrites:
-    - source: "/<*>"
-      target: "/index.html"
-      status: "200"
