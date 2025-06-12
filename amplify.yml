@@ -4,20 +4,17 @@ frontend:
   phases:
     preBuild:
       commands:
-        - cd pokedex
-        - nvm use 20
-        - npm install
+        - cd pokedex && nvm use 20 && npm install
     build:
       commands:
-        - cd pokedex
-        - npm run build
+        - cd pokedex && npm run build
   artifacts:
     baseDirectory: pokedex/dist
     files:
       - "**/*"
   cache:
     paths:
-      - node_modules/**/*
+      - pokedex/node_modules/**/*
   customHeaders:
     - pattern: "**/*"
       headers:
