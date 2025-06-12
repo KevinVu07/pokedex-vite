@@ -102,8 +102,6 @@ function Home() {
     setIsSearching(false); // Set searching state to false when done
   }, 500); // 500ms delay for debouncing
 
-
-
   const displayPokemons = searchfield ? filteredPokemonList : pokemonList;
 
   const loadMorePokemons = () => {
@@ -112,7 +110,7 @@ function Home() {
 
   return (
     <div className="tc">
-      <SearchBox searchChange={onSearchChange} searchValue={searchfield} />
+      <SearchBox searchChange={onSearchChange} />
       <Scroll>
         <ErrorBoundary>
           {displayPokemons && displayPokemons.length > 0 ? (
