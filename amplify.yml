@@ -9,6 +9,10 @@ frontend:
     build:
       commands:
         - npm run build
+        - echo "Build completed. Checking dist contents:"
+        - ls -la dist/
+        - echo "Checking _redirects file:"
+        - cat dist/_redirects || echo "_redirects file not found in dist"
   artifacts:
     baseDirectory: dist
     files:
@@ -25,3 +29,7 @@ frontend:
           value: "1; mode=block"
         - key: "X-Content-Type-Options"
           value: "nosniff"
+  rewrites:
+    - source: "/<*>"
+      target: "/index.html"
+      status: "200"
