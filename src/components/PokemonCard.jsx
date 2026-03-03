@@ -1,50 +1,74 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useFavorites } from "../context/FavoritesContext";
+import { fetchPokemonByName } from "../services/pokemonCache";
 
-function PokemonCard(props) {
-  const POKEMON_API = "https://pokeapi.co/api/v2/";
-  const TYPE_COLORS = {
-    normal: "#A8A77A",
-    fire: "#EE8130",
-    water: "#6390F0",
-    electric: "#F7D02C",
-    grass: "#7AC74C",
-    ice: "#96D9D6",
-    fighting: "#C22E28",
-    poison: "#A33EA1",
-    ground: "#E2BF65",
-    flying: "#A98FF3",
-    psychic: "#F95587",
-    bug: "#A6B91A",
-    rock: "#B6A136",
-    ghost: "#735797",
-    dragon: "#6F35FC",
-    dark: "#705746",
-    steel: "#B7B7CE",
-    fairy: "#D685AD",
-  };
+const TYPE_COLORS = {
+  normal: "#A8A77A",
+  fire: "#EE8130",
+  water: "#6390F0",
+  electric: "#F7D02C",
+  grass: "#7AC74C",
+  ice: "#96D9D6",
+  fighting: "#C22E28",
+  poison: "#A33EA1",
+  ground: "#E2BF65",
+  flying: "#A98FF3",
+  psychic: "#F95587",
+  bug: "#A6B91A",
+  rock: "#B6A136",
+  ghost: "#735797",
+  dragon: "#6F35FC",
+  dark: "#705746",
+  steel: "#B7B7CE",
+  fairy: "#D685AD",
+};
 
+function PokemonCard({ name }) {
+  const { user } = useAuth();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const [pokemonImg, setPokemonImg] = useState("");
   const [pokemonTypes, setPokemonTypes] = useState([]);
 
   useEffect(() => {
-    async function getPokemonData() {
-      const response = await fetch(`${POKEMON_API}pokemon/${props.name}`);
-      const data = await response.json();
+    if (!name) return;
+    let cancelled = false;
+
+    fetchPokemonByName(name).then((data) => {
+      if (cancelled) return;
       setPokemonImg(data?.sprites?.other?.["official-artwork"]?.front_default);
       setPokemonTypes(data.types.map((typeInfo) => typeInfo.type.name));
-    }
+    }).catch(() => {});
 
-    if (props.name) {
-      getPokemonData();
-    }
-  }, [props.name]); // Dependency array ensures the effect runs when `props.name` changes
+    return () => { cancelled = true; };
+  }, [name]);
+
+  function handleFavoriteClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFavorite(name);
+  }
+
+  const favorited = isFavorite(name);
 
   return (
-    <div className="tc bg-light dib br3 pa3 ma2 grow bw2 shadow-5">
-      {pokemonImg ? <img className="pokemonImg" src={pokemonImg} alt="pokemon" /> : <p>Loading...</p>}
+    <div className="tc bg-light dib br3 pa3 ma2 grow bw2 shadow-5 pokemon-card-wrapper">
+      {user && (
+        <button
+          className={`fav-heart ${favorited ? "fav-active" : ""}`}
+          onClick={handleFavoriteClick}
+          title={favorited ? "Remove from favorites" : "Add to favorites"}
+        >
+          {favorited ? "♥" : "♡"}
+        </button>
+      )}
+      {pokemonImg ? (
+        <img className="pokemonImg" src={pokemonImg} alt={name} />
+      ) : (
+        <p>Loading...</p>
+      )}
       <div>
-        {/* Check if name exists before rendering */}
-        <h2>{props.name ? props.name[0].toUpperCase() + props.name.slice(1) : "Unknown Pokémon"}</h2>
+        <h2>{name ? name[0].toUpperCase() + name.slice(1) : "Unknown Pokémon"}</h2>
         <div>
           {pokemonTypes.map((type) => (
             <span

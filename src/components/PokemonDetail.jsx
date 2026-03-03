@@ -1,45 +1,32 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import PokemonCard from "./PokemonCard";
 import EvolutionChain from "./EvolutionChain";
 import TextToSpeech from "./TextToSpeech";
+import { fetchPokemonByName, fetchPokemonSpecies } from "../services/pokemonCache";
 
 function PokemonDetail() {
-  const { name } = useParams(); // Extract the Pokémon name from the URL
-  const POKEMON_API = "https://pokeapi.co/api/v2/";
+  const { name } = useParams();
   const [pokemonData, setPokemonData] = useState(null);
   const [pokemonFlavorText, setPokemonFlavorText] = useState(null);
 
-  // fetch pokemon data
   useEffect(() => {
-    async function fetchPokemonData() {
-      const response = await fetch(`${POKEMON_API}pokemon/${name}`);
-      const data = await response.json();
-      setPokemonData(data);
-    }
-    fetchPokemonData();
+    fetchPokemonByName(name)
+      .then(setPokemonData)
+      .catch((err) => console.error("Error fetching pokemon:", err));
   }, [name]);
 
   useEffect(() => {
-    if (pokemonData?.species?.url) {
-      async function fetchPokemonFlavorText() {
-        const speciesUrl = pokemonData.species.url;
-        const response = await fetch(speciesUrl);
-        const data = await response.json();
-        const flavorTextEntries = data.flavor_text_entries;
+    if (!pokemonData?.species?.url) return;
 
-        // Find the first flavor text entry in English
-        const flavorTextChosenObj = flavorTextEntries.find((entry) => entry.language.name === "en");
-
-        if (flavorTextChosenObj) {
-          const flavorText = flavorTextChosenObj.flavor_text;
-          setPokemonFlavorText(flavorText);
-        } else {
-          console.log("No English flavor text found.");
-        }
-      }
-      fetchPokemonFlavorText();
-    }
+    fetchPokemonSpecies(pokemonData.species.url)
+      .then((data) => {
+        const entry = data.flavor_text_entries.find(
+          (e) => e.language.name === "en"
+        );
+        if (entry) setPokemonFlavorText(entry.flavor_text);
+      })
+      .catch((err) => console.error("Error fetching species:", err));
   }, [pokemonData?.species?.url]);
 
   if (!pokemonData) {
@@ -74,7 +61,8 @@ function PokemonDetail() {
               <strong>Weight:</strong> {Math.round(weight / 2.205)} kgs
             </p>
             <p>
-              <strong>Abilities:</strong> {abilities.map((a) => a.ability.name).join(", ")}
+              <strong>Abilities:</strong>{" "}
+              {abilities.map((a) => a.ability.name).join(", ")}
             </p>
           </div>
           <div className="pokemon-stats">
@@ -89,7 +77,6 @@ function PokemonDetail() {
           </div>
         </div>
       </div>
-      {/* Evolution Chain Component */}
       <EvolutionChain speciesUrl={pokemonData.species.url} />
     </div>
   );

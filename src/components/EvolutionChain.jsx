@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import PokemonCard from "./PokemonCard";
 import { Link } from "react-router-dom";
+import { fetchWithCache } from "../services/pokemonCache";
 
 function EvolutionChain({ speciesUrl }) {
   const [evolutionChain, setEvolutionChain] = useState([]);
@@ -8,12 +9,9 @@ function EvolutionChain({ speciesUrl }) {
   useEffect(() => {
     async function fetchEvolutionChain() {
       try {
-        const speciesResponse = await fetch(speciesUrl);
-        const speciesData = await speciesResponse.json();
+        const speciesData = await fetchWithCache(speciesUrl);
         const evolutionUrl = speciesData.evolution_chain.url;
-
-        const evolutionResponse = await fetch(evolutionUrl);
-        const evolutionData = await evolutionResponse.json();
+        const evolutionData = await fetchWithCache(evolutionUrl);
 
         const chain = [];
         let current = evolutionData.chain;
@@ -21,7 +19,7 @@ function EvolutionChain({ speciesUrl }) {
         do {
           chain.push({
             name: current.species.name,
-            id: current.species.url.split("/").slice(-2, -1)[0], // Extracting the Pokémon ID from the URL
+            id: current.species.url.split("/").slice(-2, -1)[0],
           });
           current = current.evolves_to[0];
         } while (current);
@@ -43,7 +41,7 @@ function EvolutionChain({ speciesUrl }) {
       <div className="evolution-container">
         {evolutionChain.map((pokemon) => (
           <div key={pokemon.name} className="evolution-item">
-            <Link className="link" key={pokemon.name} to={`/${pokemon.name}`}>
+            <Link className="link" to={`/${pokemon.name}`}>
               <PokemonCard name={pokemon.name} className="pokemon-evolution-card" />
             </Link>
           </div>
