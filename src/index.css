@@ -188,7 +188,7 @@ width: 200px;
   align-items: center;
   justify-content: space-between;
   padding: 8px 24px;
-  background: linear-gradient(135deg, #e53935 0%, #d32f2f 100%);
+  background: linear-gradient(135deg, #2A5599 0%, #1e3d6f 100%);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   flex-wrap: wrap;
   gap: 8px;
@@ -259,7 +259,7 @@ width: 200px;
 
 .nav-btn:hover {
   background: #fff;
-  color: #d32f2f;
+  color: #2A5599;
 }
 
 /* ===== Auth Modal ===== */
@@ -336,8 +336,8 @@ width: 200px;
 }
 
 .auth-tab.active {
-  color: #e53935;
-  border-bottom-color: #e53935;
+  color: #2A5599;
+  border-bottom-color: #2A5599;
 }
 
 .auth-form {
@@ -363,11 +363,11 @@ width: 200px;
 
 .auth-form input:focus {
   outline: none;
-  border-color: #e53935;
+  border-color: #2A5599;
 }
 
 .auth-submit {
-  background: linear-gradient(135deg, #e53935, #ff6f00);
+  background: linear-gradient(135deg, #2A5599, #FFCC01);
   color: white;
   border: none;
   padding: 12px;
@@ -381,7 +381,7 @@ width: 200px;
 
 .auth-submit:hover {
   transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.4);
+  box-shadow: 0 4px 12px rgba(42, 85, 153, 0.4);
 }
 
 .auth-error {
@@ -412,14 +412,14 @@ width: 200px;
 
 .fav-pokemon-input-row input:focus {
   outline: none;
-  border-color: #e53935;
+  border-color: #2A5599;
 }
 
 .profile-preview {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 2px solid #e53935;
+  border: 2px solid #2A5599;
   background: #fef3f3;
   object-fit: contain;
 }
@@ -447,8 +447,8 @@ width: 200px;
 }
 
 .pokemon-suggestions li:hover {
-  background: #fef3f3;
-  color: #e53935;
+  background: #eef3fb;
+  color: #2A5599;
 }
 
 /* ===== Favorite Heart ===== */
@@ -532,6 +532,12 @@ width: 200px;
   border-radius: 12px;
   font-size: 0.8rem;
   font-weight: 700;
+}
+
+.ai-remaining {
+  font-size: 0.8rem;
+  color: #999;
+  font-style: italic;
 }
 
 .ai-search-row {

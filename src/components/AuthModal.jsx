@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
-import { fetchAllPokemonNames } from "../services/pokemonCache";
+import { fetchAllPokemonNames, fetchPokemonByName } from "../services/pokemonCache";
 
 function AuthModal({ isOpen, onClose }) {
   const { signup, login } = useAuth();
@@ -12,6 +12,7 @@ function AuthModal({ isOpen, onClose }) {
   const [allNames, setAllNames] = useState([]);
   const [error, setError] = useState("");
   const [previewSprite, setPreviewSprite] = useState("");
+  const [verifiedSpriteUrl, setVerifiedSpriteUrl] = useState("");
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -36,29 +37,42 @@ function AuthModal({ isOpen, onClose }) {
   }, [favPokemon, allNames]);
 
   useEffect(() => {
-    if (favPokemon && allNames.includes(favPokemon.toLowerCase())) {
-      const name = favPokemon.toLowerCase();
-      const idx = allNames.indexOf(name);
-      const id = idx >= 0 ? idx + 1 : 25;
-      setPreviewSprite(
-        `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
-      );
-    } else {
+    const name = favPokemon.toLowerCase().trim();
+    if (!name || !allNames.includes(name)) {
       setPreviewSprite("");
+      setVerifiedSpriteUrl("");
+      return;
     }
-  }, [favPokemon, allNames]);
 
-  function getIdByName(name) {
-    const idx = allNames.indexOf(name.toLowerCase());
-    return idx >= 0 ? idx + 1 : 25;
-  }
+    let cancelled = false;
+    fetchPokemonByName(name)
+      .then((data) => {
+        if (cancelled) return;
+        const sprite = data?.sprites?.front_default;
+        if (sprite) {
+          setPreviewSprite(sprite);
+          setVerifiedSpriteUrl(sprite);
+        } else {
+          setPreviewSprite("");
+          setVerifiedSpriteUrl("");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPreviewSprite("");
+          setVerifiedSpriteUrl("");
+        }
+      });
+
+    return () => { cancelled = true; };
+  }, [favPokemon, allNames]);
 
   function handleSubmit(e) {
     e.preventDefault();
     setError("");
 
     if (mode === "signup") {
-      const result = signup(username, password, favPokemon || "pikachu");
+      const result = signup(username, password, favPokemon || "pikachu", verifiedSpriteUrl);
       if (!result.ok) {
         setError(result.error);
         return;
@@ -78,6 +92,8 @@ function AuthModal({ isOpen, onClose }) {
     setPassword("");
     setFavPokemon("");
     setError("");
+    setPreviewSprite("");
+    setVerifiedSpriteUrl("");
     setPokemonSuggestions([]);
     onClose();
   }

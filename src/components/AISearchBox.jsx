@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { aiSearchPokemon } from "../services/aiSearch";
+import { checkRateLimit, recordUsage } from "../services/rateLimiter";
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -8,14 +9,14 @@ function AISearchBox({ onResults, onClear, isSearching: externalSearching }) {
   const [isListening, setIsListening] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const [error, setError] = useState("");
+  const [remaining, setRemaining] = useState(null);
   const recognitionRef = useRef(null);
   const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
   useEffect(() => {
+    setRemaining(checkRateLimit().remaining);
     return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.abort();
-      }
+      if (recognitionRef.current) recognitionRef.current.abort();
     };
   }, []);
 
@@ -57,9 +58,7 @@ function AISearchBox({ onResults, onClear, isSearching: externalSearching }) {
   }
 
   function stopListening() {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
+    if (recognitionRef.current) recognitionRef.current.stop();
     setIsListening(false);
   }
 
@@ -72,11 +71,20 @@ function AISearchBox({ onResults, onClear, isSearching: externalSearching }) {
       return;
     }
 
+    const limit = checkRateLimit();
+    if (!limit.allowed) {
+      setError(limit.message);
+      setRemaining(0);
+      return;
+    }
+
     setError("");
     setIsThinking(true);
 
     try {
       const pokemonNames = await aiSearchPokemon(searchText, apiKey);
+      recordUsage();
+      setRemaining(checkRateLimit().remaining);
       onResults(pokemonNames);
     } catch (err) {
       setError(err.message || "Something went wrong with AI search.");
@@ -103,6 +111,9 @@ function AISearchBox({ onResults, onClear, isSearching: externalSearching }) {
       <div className="ai-search-label">
         <span className="ai-badge">✨ AI</span>
         <span>Ask me about any Pokémon!</span>
+        {remaining !== null && (
+          <span className="ai-remaining">({remaining} searches left this hour)</span>
+        )}
       </div>
       <div className="ai-search-row">
         <input

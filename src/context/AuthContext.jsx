@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  function signup(username, password, favoritePokemon) {
+  function signup(username, password, favoritePokemon, spriteUrl) {
     const users = getUsers();
     const normalizedUsername = username.toLowerCase().trim();
 
@@ -45,13 +45,12 @@ export function AuthProvider({ children }) {
     }
 
     const pokemonName = (favoritePokemon || "pikachu").toLowerCase().trim();
-    const profileImg = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${getPokemonIdFromName(pokemonName)}.png`;
-    const profileSprite = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${getPokemonIdFromName(pokemonName)}.png`;
+    const fallbackSprite = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png";
+    const profileSprite = spriteUrl || fallbackSprite;
 
     users[normalizedUsername] = {
       password: btoa(password),
       favoritePokemon: pokemonName,
-      profileImg,
       profileSprite,
     };
     saveUsers(users);
@@ -94,18 +93,4 @@ export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
-}
-
-const KNOWN_POKEMON_IDS = {
-  bulbasaur: 1, ivysaur: 2, venusaur: 3, charmander: 4, charmeleon: 5,
-  charizard: 6, squirtle: 7, wartortle: 8, blastoise: 9, caterpie: 10,
-  pikachu: 25, raichu: 26, jigglypuff: 39, meowth: 52, psyduck: 54,
-  growlithe: 58, machop: 66, geodude: 74, gengar: 94, onix: 95,
-  eevee: 133, snorlax: 143, mewtwo: 150, mew: 151, chikorita: 152,
-  cyndaquil: 155, totodile: 158, pichu: 172, togepi: 175, mudkip: 258,
-  torchic: 255, treecko: 252, lucario: 448, garchomp: 445, greninja: 658,
-};
-
-function getPokemonIdFromName(name) {
-  return KNOWN_POKEMON_IDS[name.toLowerCase()] || 25; // default to pikachu sprite
 }

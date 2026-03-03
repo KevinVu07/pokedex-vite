@@ -15,10 +15,10 @@ function App() {
       <AuthProvider>
         <FavoritesProvider>
           <div className="bg-light">
+            <NavBar />
             <Link className="link heading-link" to="/">
               <Heading />
             </Link>
-            <NavBar />
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/favorites" element={<FavoritesPage />} />
