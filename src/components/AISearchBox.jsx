@@ -27,16 +27,20 @@ function AISearchBox({ onResults, onClear, isSearching: externalSearching }) {
     }
 
     setError("");
+    setQuery("");
+
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
-    recognition.interimResults = false;
+    recognition.continuous = true;
+    recognition.interimResults = true;
     recognition.maxAlternatives = 1;
 
     recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
+      let transcript = "";
+      for (let i = 0; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
       setQuery(transcript);
-      setIsListening(false);
-      handleSearch(transcript);
     };
 
     recognition.onerror = (event) => {
@@ -45,7 +49,7 @@ function AISearchBox({ onResults, onClear, isSearching: externalSearching }) {
         setError("I didn't hear anything. Try again!");
       } else if (event.error === "not-allowed") {
         setError("Please allow microphone access to use voice search.");
-      } else {
+      } else if (event.error !== "aborted") {
         setError("Oops, something went wrong with voice. Try typing instead!");
       }
     };
@@ -63,8 +67,10 @@ function AISearchBox({ onResults, onClear, isSearching: externalSearching }) {
   }
 
   async function handleSearch(text) {
-    const searchText = text || query;
-    if (!searchText.trim()) return;
+    if (isListening) stopListening();
+
+    const searchText = (text || query).trim();
+    if (!searchText) return;
 
     if (!apiKey) {
       setError("AI search needs an OpenAI API key. Add VITE_OPENAI_API_KEY to your .env file.");
@@ -94,6 +100,7 @@ function AISearchBox({ onResults, onClear, isSearching: externalSearching }) {
   }
 
   function handleClear() {
+    if (isListening) stopListening();
     setQuery("");
     setError("");
     onClear();
@@ -123,13 +130,13 @@ function AISearchBox({ onResults, onClear, isSearching: externalSearching }) {
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder='Try "a fire dragon" or "cute pink pokemon"'
-          disabled={isThinking || isListening}
+          disabled={isThinking}
         />
 
         <button
           className={`ai-mic-btn ${isListening ? "listening" : ""}`}
           onClick={isListening ? stopListening : startListening}
-          title={isListening ? "Stop listening" : "Voice search"}
+          title={isListening ? "Stop recording" : "Voice search"}
           disabled={isThinking}
         >
           {isListening ? "⏹️" : "🎤"}
@@ -151,7 +158,9 @@ function AISearchBox({ onResults, onClear, isSearching: externalSearching }) {
       </div>
 
       {isListening && (
-        <p className="ai-status listening-pulse">🎙️ Listening... speak now!</p>
+        <p className="ai-status listening-pulse">
+          🎙️ Listening... press Search when you&apos;re done!
+        </p>
       )}
       {isThinking && (
         <p className="ai-status">🤔 Asking AI about &quot;{query}&quot;...</p>
